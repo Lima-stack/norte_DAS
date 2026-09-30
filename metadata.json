@@ -1,0 +1,6 @@
+{
+  "name": "Norte — O seu negócio começa aqui",
+  "description": "Comece gratuitamente, continue por 1 €/mês e ganhe até 8000 € em créditos à medida que vende. Loja online, créditos, assistente de IA e venda omnicanal.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
