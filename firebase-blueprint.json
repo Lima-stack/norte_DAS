@@ -1,0 +1,182 @@
+{
+  "entities": {
+    "CatalogoItem": {
+      "title": "CatalogoItem",
+      "description": "Item do catálogo de preços de serviços e produtos da Norte",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único do item do catálogo"
+        },
+        "nome": {
+          "type": "string",
+          "description": "Nome do serviço ou produto",
+          "maxLength": 100
+        },
+        "descricao": {
+          "type": "string",
+          "description": "Descrição curta do serviço ou produto",
+          "maxLength": 500
+        },
+        "preco": {
+          "type": "number",
+          "description": "Preço em euros sem IVA"
+        },
+        "unidade": {
+          "type": "string",
+          "description": "Unidade de cobrança (ex: mês, unidade, hora)"
+        },
+        "ativo": {
+          "type": "boolean",
+          "description": "Estado ativo do serviço no catálogo"
+        }
+      },
+      "required": ["id", "nome", "descricao", "preco", "unidade", "ativo"]
+    },
+    "Pedido": {
+      "title": "Pedido",
+      "description": "Registo de pedido de proposta submetido pelo utilizador",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único do pedido"
+        },
+        "nome": {
+          "type": "string",
+          "description": "Nome do requerente",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "E-mail do requerente",
+          "maxLength": 255
+        },
+        "pedido": {
+          "type": "string",
+          "description": "Texto descritivo do pedido",
+          "maxLength": 2000
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado do pedido",
+          "enum": ["recebido", "proposta gerada"]
+        },
+        "criadoEm": {
+          "type": "string",
+          "description": "Data de criação em formato ISO"
+        },
+        "propostaId": {
+          "type": "string",
+          "description": "ID da proposta gerada, se aplicável"
+        },
+        "atualizadoEm": {
+          "type": "string",
+          "description": "Data de atualização em formato ISO"
+        }
+      },
+      "required": ["id", "nome", "email", "pedido", "estado", "criadoEm"]
+    },
+    "Proposta": {
+      "title": "Proposta",
+      "description": "Proposta orçamentada gerada para o pedido",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único da proposta"
+        },
+        "pedidoId": {
+          "type": "string",
+          "description": "ID do pedido associado"
+        },
+        "resumo": {
+          "type": "string",
+          "description": "Resumo do pedido"
+        },
+        "itens": {
+          "type": "array",
+          "description": "Lista de itens orçamentados"
+        },
+        "pedidosNaoCobertos": {
+          "type": "array",
+          "description": "Lista de pedidos que o catálogo não cobre"
+        },
+        "subtotal": {
+          "type": "number",
+          "description": "Subtotal em euros sem IVA"
+        },
+        "taxaIva": {
+          "type": "number",
+          "description": "Taxa de IVA aplicada (0.23)"
+        },
+        "iva": {
+          "type": "number",
+          "description": "Valor do IVA em euros"
+        },
+        "total": {
+          "type": "number",
+          "description": "Total final em euros com IVA"
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado da proposta",
+          "enum": ["gerada", "enviada", "erro_email"]
+        },
+        "nomeCliente": {
+          "type": "string",
+          "description": "Nome do cliente associado à proposta"
+        },
+        "dataEnvio": {
+          "type": "string",
+          "description": "Data de envio do email em formato ISO"
+        },
+        "link": {
+          "type": "string",
+          "description": "Link público direto da proposta"
+        },
+        "erroEmail": {
+          "type": "string",
+          "description": "Mensagem descritiva caso o envio de email falhe"
+        },
+        "criadoEm": {
+          "type": "string",
+          "description": "Data de criação em formato ISO"
+        }
+      },
+      "required": [
+        "id",
+        "pedidoId",
+        "itens",
+        "subtotal",
+        "taxaIva",
+        "iva",
+        "total",
+        "resumo",
+        "estado",
+        "criadoEm"
+      ]
+    }
+  },
+  "firestore": {
+    "/catalogo/{itemId}": {
+      "schema": {
+        "$ref": "#/entities/CatalogoItem"
+      },
+      "description": "Coleção com a tabela de preços de serviços e produtos da Norte"
+    },
+    "/pedidos/{pedidoId}": {
+      "schema": {
+        "$ref": "#/entities/Pedido"
+      },
+      "description": "Coleção de pedidos de proposta submetidos"
+    },
+    "/propostas/{propostaId}": {
+      "schema": {
+        "$ref": "#/entities/Proposta"
+      },
+      "description": "Coleção de propostas geradas com preços e totais calculados"
+    }
+  }
+}

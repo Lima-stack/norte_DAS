@@ -36,8 +36,17 @@ export function BookingModal() {
   useEffect(() => {
     const on = () => setOpen(true);
     window.addEventListener(EVENT, on);
-    if (window.location.hash === "#agendar") setOpen(true);
-    return () => window.removeEventListener(EVENT, on);
+    const checkOpen = () => {
+      if (window.location.hash === "#agendar" || window.location.search.includes("agendar")) {
+        setOpen(true);
+      }
+    };
+    checkOpen();
+    window.addEventListener("hashchange", checkOpen);
+    return () => {
+      window.removeEventListener(EVENT, on);
+      window.removeEventListener("hashchange", checkOpen);
+    };
   }, []);
   useEffect(() => {
     if (!open) return;

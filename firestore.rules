@@ -1,0 +1,63 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email == "Mipaclima@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    function isServerWrite() {
+      return request.resource.data._srvToken == "norte_srv_key_2026";
+    }
+
+    // Coleção "catalogo": tabela de preços de serviços e produtos
+    match /catalogo/{itemId} {
+      // Leitura pública permitida para consulta de preços e serviços
+      allow get: if isValidId(itemId);
+      allow list: if true;
+
+      // "catalogo" não é escrevível pelo browser (apenas pelo servidor ou admin)
+      allow write: if isValidId(itemId) && (isServerWrite() || isAdmin());
+    }
+
+    // Coleção "pedidos": registo de pedidos de proposta
+    match /pedidos/{pedidoId} {
+      // Ler "pedidos" é só para o admin autenticado
+      allow get: if isValidId(pedidoId) && isAdmin();
+      allow list: if isAdmin();
+
+      // O browser só pode criar documentos em "pedidos"
+      allow create: if isValidId(pedidoId);
+
+      // Atualização ou remoção apenas pelo servidor ou admin
+      allow update, delete: if isValidId(pedidoId) && (isServerWrite() || isAdmin());
+    }
+
+    // Coleção "propostas": propostas orçamentadas com itens e totais calculados
+    match /propostas/{propostaId} {
+      // Ler "propostas" é só para o admin autenticado
+      allow get: if isValidId(propostaId) && isAdmin();
+      allow list: if isAdmin();
+
+      // Escrita gerida exclusivamente pelo servidor ou admin
+      allow write: if isValidId(propostaId) && (isServerWrite() || isAdmin());
+    }
+  }
+}

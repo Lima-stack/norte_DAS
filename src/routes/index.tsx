@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Rocket,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { ChatWidget } from "@/components/ChatWidget";
 import { BookingModal, openBooking } from "@/components/BookingModal";
+import { PedidoPropostaForm } from "@/components/PedidoPropostaForm";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -221,6 +222,9 @@ function Index() {
               <a href="#features" className="transition-colors hover:text-ink">
                 Funcionalidades
               </a>
+              <a href="#proposta" className="transition-colors hover:text-ink">
+                Proposta
+              </a>
               <a href="#prova" className="transition-colors hover:text-ink">
                 Prova
               </a>
@@ -229,6 +233,12 @@ function Index() {
               </a>
             </nav>
             <div className="flex items-center gap-2">
+              <a
+                href="#proposta"
+                className="hidden items-center gap-1.5 rounded-[10px] px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-line sm:inline-flex"
+              >
+                Pedir proposta
+              </a>
               <button
                 onClick={() => openBooking()}
                 className="hidden items-center gap-2 rounded-[10px] px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-line sm:inline-flex"
@@ -537,6 +547,13 @@ function Index() {
         </div>
       </section>
 
+      {/* PEDIDO DE PROPOSTA */}
+      <section id="proposta" className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16 scroll-mt-12">
+        <Reveal>
+          <PedidoPropostaForm />
+        </Reveal>
+      </section>
+
       {/* CTA */}
       <section id="cta" className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
         <Reveal>
@@ -596,9 +613,9 @@ function Index() {
               <a href="#" className="transition-colors hover:text-ink">
                 Mapa do site
               </a>
-              <a href="#" className="transition-colors hover:text-ink">
-                Opções de privacidade
-              </a>
+              <Link to="/admin" className="transition-colors hover:text-ink">
+                Administração
+              </Link>
             </nav>
           </div>
           <p className="mt-8 text-xs text-ink-soft/70">
